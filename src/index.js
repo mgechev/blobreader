@@ -38,17 +38,18 @@
     reader.onload = function (e) {
       var data = e.target.result;
       this._pendingTask = false;
-      this._invokeNext();
       current.cb(data);
+      this._invokeNext();
     }.bind(this);
     reader.onerror = function () {
       throw new Error('Error while reading the blob');
     };
-    if (current.type) {
-      reader['readAs' + current.type]();
-    } else {
-      reader.readAsBinaryString();
+    if (!current.type) {
+      current.type = BlobReader.BINARY_STRING;
     }
+    reader['readAs' + current.type](
+        this.blob.slice(this.position, this.position + current.count)
+    );
     this.position += current.count;
   };
 
@@ -62,6 +63,9 @@
    * @return {BlobReader} Returns `this`
    */
   BlobReader.prototype.read = function (count, type, cb) {
+    if (count === undefined) {
+      count = this.blob.size;
+    }
     if (typeof count === 'function') {
       cb = count;
       type = undefined;
@@ -141,6 +145,10 @@
    * @return {BlobReader} Return the target object instance
    */
   BlobReader.prototype._readWrapped = function (count, cb, type) {
+    if (typeof count === 'function') {
+      cb = count;
+      count = undefined;
+    }
     var callback = function (data) {
       data = new type(data);
       cb(data);
