@@ -177,24 +177,24 @@
    * Read defined amount of bytes as uint16 array
    *
    * @public
-   * @param {Number} count Number of bytes to be read
+   * @param {Number} count Number of elements to be read (count * 2 bytes)
    * @param {Function} cb Calback to be invoked
    * @return {BlobReader} Return the target object instance
    */
   BlobReader.prototype.readUint16 = function (count, cb) {
-    return this._readWrapped(count, cb, Uint16Array);
+    return this._readWrapped(count * 2, cb, Uint16Array);
   };
 
   /**
    * Read defined amount of bytes as uint32 array
    *
    * @public
-   * @param {Number} count Number of bytes to be read
+   * @param {Number} count Number of elements to be read (count * 4 bytes)
    * @param {Function} cb Calback to be invoked
    * @return {BlobReader} Return the target object instance
    */
   BlobReader.prototype.readUint32 = function (count, cb) {
-    return this._readWrapped(count, cb, Uint32Array);
+    return this._readWrapped(count * 4, cb, Uint32Array);
   };
 
   w.BlobReader = BlobReader;
