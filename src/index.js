@@ -1,21 +1,46 @@
+/*jshint bitwise: false*/
+
 (function (w) {
   'use strict';
 
+  function getEndianness() {
+    var a = new ArrayBuffer(4);
+    var b = new Uint8Array(a);
+    var c = new Uint32Array(a);
+    b[0] = 0xa1;
+    b[1] = 0xb2;
+    b[2] = 0xc3;
+    b[3] = 0xd4;
+    if (c[0] === 0xd4c3b2a1) {
+      return BlobReader.ENDIANNESS.LITTLE_ENDIAN;
+    }
+    if (c[0] === 0xa1b2c3d4) {
+      return BlobReader.ENDIANNESS.BIG_ENDIAN;
+    } else {
+      throw new Error('Unrecognized endianness');
+    }
+  }
   /**
    * Constructor function for the blob reader.
    *
    * @public
    * @constructor
    * @param {Blob} blob The blob object, which should be read
+   * @param {BlobReader.ENDIANNESS} dataEndianness Endianness of the
+   *  expected data
+   * @param {BlobReader.ENDIANNESS} endianness System endianness
    */
-  function BlobReader(blob) {
+  function BlobReader(blob, dataEndianness, endianness) {
     if (!(this instanceof BlobReader)) {
-      return new BlobReader(blob);
+      return new BlobReader(blob, dataEndianness, endianness);
     }
-    this.blob = blob;
-    this.position = 0;
-    this.queue = [];
+    this._blob = blob;
+    this._position = 0;
+    this._queue = [];
+    this._currentEndianness = endianness || getEndianness();
+    this._dataEndianness = dataEndianness || this._currentEndianness;
     this._pendingTask = false;
+    this._currentResult = null;
   }
 
   BlobReader.ARRAY_BUFFER = 'ArrayBuffer';
@@ -23,15 +48,25 @@
   BlobReader.TEXT = 'Text';
   BlobReader.DATA_URL = 'DataURL';
 
-  BlobReader.prototype._invokeNext = function () {
-    var current = this.queue.shift();
+  BlobReader.ENDIANNESS = {
+    BIG_ENDIAN: 'BIG_ENDIAN',
+    LITTLE_ENDIAN: 'LITTLE_ENDIAN'
+  };
+
+  BlobReader.prototype.setDataEndianness = function (endianness) {
+    this._dataEndianness = endianness;
+  };
+
+  /* jshint validthis: true */
+  function invokeNext() {
+    var current = this._queue.shift();
     if (!current) {
       return;
     }
-    if (this.position + current.count > this.blob.size) {
+    if (this._position + current.count > this._blob.size) {
       throw new Error('Limit reached. Trying to read ' +
-          (this.position + current.count) + ' bytes out of ' +
-          this.blob.size + '.');
+          (this._position + current.count) + ' bytes out of ' +
+          this._blob.size + '.');
     }
     var reader = new FileReader();
     this._pendingTask = true;
@@ -39,7 +74,7 @@
       var data = e.target.result;
       this._pendingTask = false;
       current.cb(data);
-      this._invokeNext();
+      invokeNext.call(this);
     }.bind(this);
     reader.onerror = function () {
       throw new Error('Error while reading the blob');
@@ -48,10 +83,10 @@
       current.type = BlobReader.BINARY_STRING;
     }
     reader['readAs' + current.type](
-        this.blob.slice(this.position, this.position + current.count)
+        this._blob.slice(this._position, this._position + current.count)
     );
-    this.position += current.count;
-  };
+    this._position += current.count;
+  }
 
   /**
    * Read definite amount of bytes by the blob
@@ -69,24 +104,24 @@
       type = count;
     }
     if (count === undefined) {
-      count = this.blob.size - this.position;
+      count = this._blob.size - this._position;
     }
     if (typeof count === 'function') {
       cb = count;
       type = undefined;
-      count = this.blob.size - this.position;
+      count = this._blob.size - this._position;
     }
     if (typeof type === 'function') {
       cb = type;
       type = undefined;
     }
-    this.queue.push({
+    this._queue.push({
       count: count,
       cb: cb,
       type: type
     });
     if (!this._pendingTask) {
-      this._invokeNext();
+      invokeNext.call(this);
     }
     return this;
   };
@@ -97,7 +132,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @return {BlobReader} Return the target object
    */
   BlobReader.prototype.readText = function (count, cb) {
     return this.read(count, BlobReader.TEXT, cb);
@@ -109,7 +144,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @return {BlobReader} Return the target object
    */
   BlobReader.prototype.readArrayBuffer = function (count, cb) {
     return this.read(count, BlobReader.ARRAY_BUFFER, cb);
@@ -121,7 +156,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @return {BlobReader} Return the target object
    */
   BlobReader.prototype.readBinaryString = function (count, cb) {
     return this.read(count, BlobReader.BINARY_STRING, cb);
@@ -133,68 +168,147 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @return {BlobReader} Return the target object
    */
   BlobReader.prototype.readDataURL = function (count, cb) {
     return this.read(count, BlobReader.DATA_URL, cb);
   };
 
-  /**
-   * Read defined amount of bytes as text
-   *
-   * @private
-   * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
-   * @param {Function} type Constructor function which indicates
-   *  the type which should be used as wrapper of the returned data
-   * @return {BlobReader} Return the target object instance
-   */
-  BlobReader.prototype._readWrapped = function (count, cb, type) {
-    if (typeof count === 'function') {
-      cb = count;
-      count = undefined;
+  function swap(arr, cb) {
+    for (var i = 0; i < arr.length; i += 1) {
+      arr[i] = cb(arr[i]);
     }
-    var callback = function (data) {
-      data = new type(data);
-      cb(data);
-    };
-    return this.readArrayBuffer(count, callback);
+    return arr;
+  }
+
+  var byteFormatter = {
+    swap8: function (arr) {
+      return swap(arr, function (val) {
+        return val;
+      });
+    },
+    swap16: function (arr) {
+      return swap(arr, function (val) {
+        return ((val & 0xFF) << 8) |
+               ((val >> 8) & 0xFF);
+      });
+    },
+    swap32: function (arr) {
+      return swap(arr, function (val) {
+        return ((val & 0xFF) << 24) |
+               ((val & 0xFF00) << 8) |
+               ((val >> 8) & 0xFF00) |
+               ((val >> 24) & 0xFF);
+      });
+    }
   };
+
+  /* jshint validthis: true */
+  function uintReader(name, count, octets, endianness) {
+    if (!this._currentResult) {
+      this._currentResult = {};
+    }
+    count = (count || 1) * octets;
+    var callback = function (data) {
+      var bitsNum = 8 * octets;
+      var type = window['Uint' + bitsNum + 'Array'];
+      data = new type(data);
+      if (this._currentEndianness !== endianness) {
+        data = byteFormatter['swap' + bitsNum](data);
+      }
+      this._currentResult[name] = data;
+    }.bind(this);
+    return this.readArrayBuffer(count, callback);
+  }
 
   /**
    * Read defined amount of bytes as uint8 array
    *
    * @public
-   * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @param {String} name Property name
+   * @param {Number} count Number of 8 bit numbers to be read
+   * @param {BlobReader.ENDIANNESS} endianness Endianness of the
+   *  bytes which should be read. If differ from the system's endianness
+   *  the values will be converted
+   * @return {BlobReader} Return the target object
    */
-  BlobReader.prototype.readUint8 = function (count, cb) {
-    return this._readWrapped(count, cb, Uint8Array);
+  BlobReader.prototype.readUint8 = function (name, count, endianness) {
+    return uintReader.call(this, name, count, 1,
+           endianness || this._dataEndianness);
   };
 
   /**
    * Read defined amount of bytes as uint16 array
    *
    * @public
-   * @param {Number} count Number of elements to be read (count * 2 bytes)
-   * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @param {String} name Property name
+   * @param {Number} count Number of 16 bit numbers to be read
+   * @param {BlobReader.ENDIANNESS} endianness Endianness of the
+   *  bytes which should be read. If differ from the system's endianness
+   *  the values will be converted
+   * @return {BlobReader} Return the target object
    */
-  BlobReader.prototype.readUint16 = function (count, cb) {
-    return this._readWrapped(count * 2, cb, Uint16Array);
+  BlobReader.prototype.readUint16 = function (name, count, endianness) {
+    return uintReader.call(this, name, count, 2,
+           endianness || this._dataEndianness);
   };
 
   /**
    * Read defined amount of bytes as uint32 array
    *
    * @public
-   * @param {Number} count Number of elements to be read (count * 4 bytes)
-   * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object instance
+   * @param {String} name Property name
+   * @param {Number} count Number of 32 bit numbers to be read
+   * @param {BlobReader.ENDIANNESS} endianness Endianness of the
+   *  bytes which should be read. If differ from the system's endianness
+   *  the values will be converted
+   * @return {BlobReader} Return the target object
    */
-  BlobReader.prototype.readUint32 = function (count, cb) {
-    return this._readWrapped(count * 4, cb, Uint32Array);
+  BlobReader.prototype.readUint32 = function (name, count, endianness) {
+    return uintReader.call(this, name, count, 4,
+           endianness || this._dataEndianness);
+  };
+
+  /**
+   * Read a blob and push it to the result object
+   *
+   * @public
+   * @param {String} name Property name
+   * @param {Number} count Number of bytes to be sliced from the Blob
+   * @return {BlobReader} Return the target object
+   */
+  BlobReader.prototype.readBlob = function (name, count) {
+    var result = this._blob.slice(this._position, this._position + count);
+    this._queue.push({
+      count: count,
+      cb: function () {
+        this._currentResult[name] = result;
+      }.bind(this)
+    });
+    return this;
+  };
+
+  /**
+   * Gets the result object
+   *
+   * @public
+   * @return {Object} The object resulted from the calls of readUint
+   */
+  BlobReader.prototype.commit = function (cb) {
+    if (!this._currentResult) {
+      throw new Error('Cannot commit without any reads');
+    }
+    var res = this._currentResult;
+    var task = {
+      count: 0,
+      type: BlobReader.ARRAY_BUFFER,
+      cb: function () {
+        cb(res);
+        this._currentResult = null;
+      }.bind(this)
+    };
+    this._queue.push(task);
+    return this;
   };
 
   w.BlobReader = BlobReader;
