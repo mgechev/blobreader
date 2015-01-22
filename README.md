@@ -1,3 +1,5 @@
+![](https://travis-ci.org/mgechev/blobreader.svg?branch=master)
+
 # BlobReader
 
 Simple interface for reading blobs, sequentially
