@@ -69,12 +69,12 @@
       type = count;
     }
     if (count === undefined) {
-      count = this.blob.size;
+      count = this.blob.size - this.position;
     }
     if (typeof count === 'function') {
       cb = count;
       type = undefined;
-      count = this.blob.size;
+      count = this.blob.size - this.position;
     }
     if (typeof type === 'function') {
       cb = type;
