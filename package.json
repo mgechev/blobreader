@@ -1,0 +1,32 @@
+{
+  "name": "blob-reader",
+  "version": "0.0.1",
+  "description": "Simple interface for reading Blobs",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mgechev/blob-reader.git"
+  },
+  "keywords": [
+    "blob",
+    "javascript",
+    "html5",
+    "reader"
+  ],
+  "author": "@mgechev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mgechev/blob-reader/issues"
+  },
+  "homepage": "https://github.com/mgechev/blob-reader",
+  "devDependencies": {
+    "gulp-rename": "^1.2.0",
+    "gulp-uglify": "^1.1.0"
+  },
+  "dependencies": {
+    "gulp": "^3.8.10"
+  }
+}
