@@ -1,0 +1,24 @@
+{
+  "name": "blobreader",
+  "version": "0.0.1",
+  "homepage": "https://github.com/mgechev/blobreader",
+  "authors": [
+    "mgechev <mgechev@gmail.com>"
+  ],
+  "description": "Nice interface for reading blobs in the browser",
+  "main": "src/index.js",
+  "keywords": [
+    "blob",
+    "html5",
+    "javascript",
+    "reader"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
