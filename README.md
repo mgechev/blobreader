@@ -6,8 +6,7 @@ Simple interface for reading blobs, sequentially
 
 ```javascript
 var blob = new Blob(/* a lot of data */);
-var reader = BlobReader(blob, BlobReader.ENDIANNESS.BIG_ENDIAN);
-reader
+BlobReader(blob, BlobReader.ENDIANNESS.BIG_ENDIAN);
 .readUint16('prop1')
 .readUint16('prop2', 2)
 .readBlob('anotherBlob', 16)
