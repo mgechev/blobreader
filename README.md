@@ -11,11 +11,11 @@ BlobReader(blob)
   // read two bytes [0, 2]
 })
 .readUint16(4, function (data) {
-  // read 4 bytes, array with two elements
-  // [2, 6]
+  // read 8 bytes, array with two elements
+  // [2, 10]
 })
 .readText(10, function (data) {
-  // some text in [6, 16]
+  // some text in [10, 20]
 });
 .readUint32(function () {
   // read the rest as Uint32Array
