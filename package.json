@@ -24,7 +24,12 @@
   "homepage": "https://github.com/mgechev/blob-reader",
   "devDependencies": {
     "gulp-rename": "^1.2.0",
-    "gulp-uglify": "^1.1.0"
+    "gulp-uglify": "^1.1.0",
+    "jasmine-core": "^2.1.3",
+    "karma": "^0.12.31",
+    "karma-chrome-launcher": "^0.1.7",
+    "karma-jasmine": "^0.3.5",
+    "karma-phantomjs-launcher": "^0.1.4"
   },
   "dependencies": {
     "gulp": "^3.8.10"

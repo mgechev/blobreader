@@ -63,6 +63,11 @@
    * @return {BlobReader} Returns `this`
    */
   BlobReader.prototype.read = function (count, type, cb) {
+    if (typeof count === 'string') {
+      cb = type;
+      count = undefined;
+      type = count;
+    }
     if (count === undefined) {
       count = this.blob.size;
     }
