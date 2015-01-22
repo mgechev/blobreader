@@ -17,6 +17,9 @@ BlobReader(blob)
 .readText(10, function (data) {
   // some text in [6, 16]
 });
+.readUint32(function () {
+  // read the rest as Uint32Array
+});
 ```
 
 # License
