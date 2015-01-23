@@ -301,6 +301,23 @@
   };
 
   /**
+   * Skips defined amount of bytes, usually used for padding
+   *
+   * @public
+   * @param {Numner} count Number of bytes to be skipped
+   * @return {BlobReader} Retnr the target object
+   */
+  BlobReader.prototype.skip = function (count) {
+    count = count || 1;
+    this._queue.push({
+      count: count,
+      type: BlobReader.BLOB,
+      cb: function () {}
+    });
+    return this;
+  };
+
+  /**
    * Gets the result object
    *
    * @public
