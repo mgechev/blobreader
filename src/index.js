@@ -47,6 +47,7 @@
   BlobReader.BINARY_STRING = 'BinaryString';
   BlobReader.TEXT = 'Text';
   BlobReader.DATA_URL = 'DataURL';
+  BlobReader.BLOB = 'Blob';
 
   BlobReader.ENDIANNESS = {
     BIG_ENDIAN: 'BIG_ENDIAN',
@@ -59,6 +60,14 @@
 
   /* jshint validthis: true */
   function invokeNext() {
+
+    function done(data) {
+      current.cb(data);
+      this._pendingTask = false;
+      this._position += current.count;
+      invokeNext.call(this);
+    }
+
     var current = this._queue.shift();
     if (!current) {
       return;
@@ -68,24 +77,24 @@
           (this._position + current.count) + ' bytes out of ' +
           this._blob.size + '.');
     }
-    var reader = new FileReader();
-    this._pendingTask = true;
-    reader.onload = function (e) {
-      var data = e.target.result;
-      this._pendingTask = false;
-      current.cb(data);
-      invokeNext.call(this);
-    }.bind(this);
-    reader.onerror = function () {
-      throw new Error('Error while reading the blob');
-    };
     if (!current.type) {
       current.type = BlobReader.BINARY_STRING;
     }
-    reader['readAs' + current.type](
-        this._blob.slice(this._position, this._position + current.count)
-    );
-    this._position += current.count;
+    var slice = this._blob
+      .slice(this._position, this._position + current.count);
+    if (current.type === BlobReader.BLOB) {
+      done.call(this, slice);
+    } else {
+      var reader = new FileReader();
+      this._pendingTask = true;
+      reader.onload = function (e) {
+        done.call(this, e.target.result);
+      }.bind(this);
+      reader.onerror = function () {
+        throw new Error('Error while reading the blob');
+      };
+      reader['readAs' + current.type](slice);
+    }
   }
 
   /**
@@ -278,10 +287,10 @@
    * @return {BlobReader} Return the target object
    */
   BlobReader.prototype.readBlob = function (name, count) {
-    var result = this._blob.slice(this._position, this._position + count);
     this._queue.push({
       count: count,
-      cb: function () {
+      type: BlobReader.BLOB,
+      cb: function (result) {
         this._currentResult[name] = result;
       }.bind(this)
     });
@@ -301,7 +310,7 @@
     var res = this._currentResult;
     var task = {
       count: 0,
-      type: BlobReader.ARRAY_BUFFER,
+      type: BlobReader.BLOB,
       cb: function () {
         cb(res);
         this._currentResult = null;
