@@ -139,7 +139,7 @@
    *
    * @public
    * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
+   * @param {Function} cb Callback to be invoked
    * @return {BlobReader} The target object
    */
   BlobReader.prototype.readText = function (count, cb) {
@@ -151,7 +151,7 @@
    *
    * @public
    * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
+   * @param {Function} cb Callback to be invoked
    * @return {BlobReader} The target object
    */
   BlobReader.prototype.readArrayBuffer = function (count, cb) {
@@ -163,7 +163,7 @@
    *
    * @public
    * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
+   * @param {Function} cb Callback to be invoked
    * @return {BlobReader} The target object
    */
   BlobReader.prototype.readBinaryString = function (count, cb) {
@@ -171,11 +171,11 @@
   };
 
   /**
-   * Read defined amount of bytes as data url
+   * Read defined amount of bytes as data URL
    *
    * @public
    * @param {Number} count Number of bytes to be read
-   * @param {Function} cb Calback to be invoked
+   * @param {Function} cb Callback to be invoked
    * @return {BlobReader} The target object
    */
   BlobReader.prototype.readDataURL = function (count, cb) {
@@ -300,7 +300,7 @@
    * Skips defined amount of bytes, usually used for padding
    *
    * @public
-   * @param {Numner} count Number of bytes to be skipped
+   * @param {Number} count Number of bytes to be skipped
    * @return {BlobReader} The target object
    */
   BlobReader.prototype.skip = function (count) {

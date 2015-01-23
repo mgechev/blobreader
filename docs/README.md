@@ -30,7 +30,7 @@ Read defined amount of bytes as text
 
 **count**: `Number`, Number of bytes to be read
 
-**cb**: `function`, Calback to be invoked
+**cb**: `function`, Callback to be invoked
 
 **Returns**: `BlobReader`, The target object
 
@@ -42,7 +42,7 @@ Read defined amount of bytes as array buffer
 
 **count**: `Number`, Number of bytes to be read
 
-**cb**: `function`, Calback to be invoked
+**cb**: `function`, Callback to be invoked
 
 **Returns**: `BlobReader`, The target object
 
@@ -54,19 +54,19 @@ Read defined amount of bytes as binary string
 
 **count**: `Number`, Number of bytes to be read
 
-**cb**: `function`, Calback to be invoked
+**cb**: `function`, Callback to be invoked
 
 **Returns**: `BlobReader`, The target object
 
 ### BlobReader.readDataURL(count, cb) 
 
-Read defined amount of bytes as data url
+Read defined amount of bytes as data URL
 
 **Parameters**
 
 **count**: `Number`, Number of bytes to be read
 
-**cb**: `function`, Calback to be invoked
+**cb**: `function`, Callback to be invoked
 
 **Returns**: `BlobReader`, The target object
 
@@ -136,7 +136,7 @@ Skips defined amount of bytes, usually used for padding
 
 **Parameters**
 
-**count**: `Numner`, Number of bytes to be skipped
+**count**: `Number`, Number of bytes to be skipped
 
 **Returns**: `BlobReader`, The target object
 
