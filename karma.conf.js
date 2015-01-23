@@ -15,7 +15,6 @@ module.exports = function (config) {
 
     // list of files / patterns to load in the browser
     files: [
-      './bower_components/blob/Blob.js',
       './src/index.js',
       './test/*.spec.js'
     ],
