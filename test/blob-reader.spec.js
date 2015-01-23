@@ -14,12 +14,13 @@ describe('BlobReader', function () {
       'readDataURL',
       'readArrayBuffer',
       'readBinaryString',
+      'readBlob',
       'readUint8',
       'readUint16',
       'readUint32'
     ];
-    methods.forEach(function (m) {
-      expect(typeof BlobReader.prototype[m]).toBe('function');
+    methods.forEach(function (method) {
+      expect(typeof BlobReader.prototype[method]).toBe('function');
     });
   });
 
