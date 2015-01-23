@@ -163,4 +163,21 @@ describe('BlobReader', function () {
     });
   });
 
+  it('should allow nested commits', function (done) {
+    var uint8 = new Uint8Array([1, 2]);
+    var blob = new Blob([uint8, 'test']);
+    BlobReader(blob)
+    .readUint8('uint8')
+    .skip()
+    .readBlob('blob')
+    .commit(function (data) {
+      expect(data.uint8).toBe(1);
+      BlobReader(data.blob)
+      .readText(function (text) {
+        expect(text).toBe('test');
+        done();
+      });
+    });
+  });
+
 });
