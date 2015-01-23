@@ -145,4 +145,22 @@ describe('BlobReader', function () {
       });
     });
 
+  it('should allow multiple commits', function (done) {
+    var uint8 = new Uint8Array([1, 2]);
+    var uint16 = new Uint16Array([3]);
+    var blob = new Blob([uint8, uint16]);
+    BlobReader(blob)
+    .readUint8('u1')
+    .readUint8('u2')
+    .commit(function (data) {
+      expect(data.u1).toBe(1);
+      expect(data.u2).toBe(2);
+    })
+    .readUint16('u3')
+    .commit(function (data) {
+      expect(data.u3).toBe(3);
+      done();
+    });
+  });
+
 });

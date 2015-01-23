@@ -40,7 +40,7 @@
     this._currentEndianness = endianness || getEndianness();
     this._dataEndianness = dataEndianness || this._currentEndianness;
     this._pendingTask = false;
-    this._currentResult = null;
+    this._currentResult = {};
   }
 
   BlobReader.ARRAY_BUFFER = 'ArrayBuffer';
@@ -213,9 +213,6 @@
 
   /* jshint validthis: true */
   function uintReader(name, count, octets, endianness) {
-    if (!this._currentResult) {
-      this._currentResult = {};
-    }
     count = (count || 1) * octets;
     var callback = function (data) {
       var bitsNum = 8 * octets;
@@ -323,16 +320,13 @@
    * @return {Object} The object resulted from the calls of readUint
    */
   BlobReader.prototype.commit = function (cb) {
-    if (!this._currentResult) {
-      throw new Error('Cannot commit without any reads');
-    }
-    var res = this._currentResult;
     var task = {
       count: 0,
       type: BlobReader.BLOB,
       cb: function () {
+        var res = this._currentResult;
+        this._currentResult = {};
         cb(res);
-        this._currentResult = null;
       }.bind(this)
     };
     this._queue.push(task);
