@@ -7,11 +7,14 @@ Simple interface for reading blobs, sequentially
 # Example
 
 ```javascript
+// Blob definition
 var uint8 = new Uint8Array([1, 2]);
 var uint16 = new Uint16Array([3]);
 var uint82 = new Uint8Array([4, 3]);
 var uint32 = new Uint32Array([8]);
 var blob = new Blob([uint8, uint16, uint82, uint32]);
+
+// Reading the blob
 BlobReader(blob)
 .readUint8('uint8', 2)
 .readUint16('uint16')
