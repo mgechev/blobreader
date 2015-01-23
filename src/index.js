@@ -225,6 +225,9 @@
       if (this._currentEndianness !== endianness) {
         data = byteFormatter['swap' + bitsNum](data);
       }
+      if (count === octets) {
+        data = data[0];
+      }
       this._currentResult[name] = data;
     }.bind(this);
     return this.readArrayBuffer(count, callback);

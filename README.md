@@ -14,9 +14,9 @@ BlobReader(blob, BlobReader.ENDIANNESS.BIG_ENDIAN);
 .readBlob('anotherBlob', 16)
 .readUint32('prop3')
 .commit(function (result) {
-  var prop1 = result.prop1[0];
+  var prop1 = result.prop1;
   var arr = [result.prop2[0], result.prop2[1]];
-  var prop3 = result.prop3[0];
+  var prop3 = result.prop3;
 });
 ```
 
