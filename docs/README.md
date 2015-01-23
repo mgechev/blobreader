@@ -20,7 +20,7 @@ Read definite amount of bytes by the blob
 **cb**: `function`, The callback, which should be
  invoked once the bytes are read
 
-**Returns**: `BlobReader`, Returns `this`
+**Returns**: `BlobReader`, `this`
 
 ### BlobReader.readText(count, cb) 
 
@@ -32,7 +32,7 @@ Read defined amount of bytes as text
 
 **cb**: `function`, Calback to be invoked
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readArrayBuffer(count, cb) 
 
@@ -44,7 +44,7 @@ Read defined amount of bytes as array buffer
 
 **cb**: `function`, Calback to be invoked
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readBinaryString(count, cb) 
 
@@ -56,7 +56,7 @@ Read defined amount of bytes as binary string
 
 **cb**: `function`, Calback to be invoked
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readDataURL(count, cb) 
 
@@ -68,7 +68,7 @@ Read defined amount of bytes as data url
 
 **cb**: `function`, Calback to be invoked
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readUint8(name, count, endianness) 
 
@@ -84,7 +84,7 @@ Read defined amount of bytes as uint8 array
  bytes which should be read. If differ from the system's endianness
  the values will be converted
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readUint16(name, count, endianness) 
 
@@ -100,7 +100,7 @@ Read defined amount of bytes as uint16 array
  bytes which should be read. If differ from the system's endianness
  the values will be converted
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readUint32(name, count, endianness) 
 
@@ -116,7 +116,7 @@ Read defined amount of bytes as uint32 array
  bytes which should be read. If differ from the system's endianness
  the values will be converted
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.readBlob(name, count) 
 
@@ -128,7 +128,7 @@ Read a blob and push it to the result object
 
 **count**: `Number`, Number of bytes to be sliced from the Blob
 
-**Returns**: `BlobReader`, Return the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.skip(count) 
 
@@ -138,7 +138,7 @@ Skips defined amount of bytes, usually used for padding
 
 **count**: `Numner`, Number of bytes to be skipped
 
-**Returns**: `BlobReader`, Retnr the target object
+**Returns**: `BlobReader`, The target object
 
 ### BlobReader.commit() 
 

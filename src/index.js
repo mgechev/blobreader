@@ -72,6 +72,9 @@
     if (!current) {
       return;
     }
+    if (current.count === undefined) {
+      current.count = this._blob.size - this._position;
+    }
     if (this._position + current.count > this._blob.size) {
       throw new Error('Limit reached. Trying to read ' +
           (this._position + current.count) + ' bytes out of ' +
@@ -104,7 +107,7 @@
    * @param {Number} count The count of bytes, which should be read
    * @param {Function} cb The callback, which should be
    *  invoked once the bytes are read
-   * @return {BlobReader} Returns `this`
+   * @return {BlobReader} `this`
    */
   BlobReader.prototype.read = function (count, type, cb) {
     if (typeof count === 'string') {
@@ -112,13 +115,9 @@
       count = undefined;
       type = count;
     }
-    if (count === undefined) {
-      count = this._blob.size - this._position;
-    }
     if (typeof count === 'function') {
       cb = count;
-      type = undefined;
-      count = this._blob.size - this._position;
+      count = undefined;
     }
     if (typeof type === 'function') {
       cb = type;
@@ -141,7 +140,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readText = function (count, cb) {
     return this.read(count, BlobReader.TEXT, cb);
@@ -153,7 +152,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readArrayBuffer = function (count, cb) {
     return this.read(count, BlobReader.ARRAY_BUFFER, cb);
@@ -165,7 +164,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readBinaryString = function (count, cb) {
     return this.read(count, BlobReader.BINARY_STRING, cb);
@@ -177,7 +176,7 @@
    * @public
    * @param {Number} count Number of bytes to be read
    * @param {Function} cb Calback to be invoked
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readDataURL = function (count, cb) {
     return this.read(count, BlobReader.DATA_URL, cb);
@@ -242,7 +241,7 @@
    * @param {BlobReader.ENDIANNESS} endianness Endianness of the
    *  bytes which should be read. If differ from the system's endianness
    *  the values will be converted
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readUint8 = function (name, count, endianness) {
     return uintReader.call(this, name, count, 1,
@@ -258,7 +257,7 @@
    * @param {BlobReader.ENDIANNESS} endianness Endianness of the
    *  bytes which should be read. If differ from the system's endianness
    *  the values will be converted
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readUint16 = function (name, count, endianness) {
     return uintReader.call(this, name, count, 2,
@@ -274,7 +273,7 @@
    * @param {BlobReader.ENDIANNESS} endianness Endianness of the
    *  bytes which should be read. If differ from the system's endianness
    *  the values will be converted
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readUint32 = function (name, count, endianness) {
     return uintReader.call(this, name, count, 4,
@@ -287,7 +286,7 @@
    * @public
    * @param {String} name Property name
    * @param {Number} count Number of bytes to be sliced from the Blob
-   * @return {BlobReader} Return the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.readBlob = function (name, count) {
     this._queue.push({
@@ -305,7 +304,7 @@
    *
    * @public
    * @param {Numner} count Number of bytes to be skipped
-   * @return {BlobReader} Retnr the target object
+   * @return {BlobReader} The target object
    */
   BlobReader.prototype.skip = function (count) {
     count = count || 1;
