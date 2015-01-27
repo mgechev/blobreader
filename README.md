@@ -31,6 +31,10 @@ BlobReader(blob)
 });
 ```
 
+# Roadmap
+
+* Add support for synchronous blob reading in workers.
+
 # License
 
 MIT
