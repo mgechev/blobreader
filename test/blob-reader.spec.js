@@ -46,6 +46,14 @@ describe('BlobReader', function () {
     });
   });
 
+  it('should read data as dataURL', function (done) {
+    BlobReader(new Blob(['foobar']))
+    .readDataURL(function (data) {
+      expect(data.split(',').pop()).toBe(btoa('foobar'));
+      done();
+    });
+  });
+
   it('should support chaining', function (done) {
     var str = 'test blob';
     var blob = new Blob([str]);
