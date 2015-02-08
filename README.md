@@ -2,7 +2,7 @@
 
 # BlobReader
 
-Simple interface for reading blobs, sequentially. 3202 bytes minified and 1172 bytes gzipped.
+Simple interface for reading blobs, sequentially. 3202 bytes minified and 1172 bytes minified + gzipped.
 
 # Example
 
