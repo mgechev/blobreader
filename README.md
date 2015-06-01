@@ -18,7 +18,7 @@ var blob = new Blob([uint8, uint16, uint82, uint32]);
 BlobReader(blob)
 .readUint8('uint8', 2)
 .readUint16('uint16')
-.readUint8('uint82')
+.readUint8('uint82', 2)
 .skip()
 .readUint32('uint32')
 .commit(function (data) {
