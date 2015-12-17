@@ -34,6 +34,7 @@ BlobReader(blob)
 # Roadmap
 
 * Add support for synchronous blob reading in workers.
+* *Add support for observables/promises.*
 
 # License
 
